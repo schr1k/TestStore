@@ -1,0 +1,6 @@
+venv
+.idea
+__pycache__
+README.md
+.gitignore
+.git

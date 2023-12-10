@@ -1,0 +1,40 @@
+services:
+    pgdb:
+        container_name: pgdb
+        image: "postgres"
+        restart: on-failure
+        ports:
+            - "5433:5432"
+        environment:
+            POSTGRES_USER: "postgres"
+            POSTGRES_PASSWORD: "postgres"
+        volumes:
+            - postgres_data:/var/lib/postgresql/data
+    redis:
+        container_name: redis
+        image: "redis"
+        restart: on-failure
+        ports:
+            - "6380:6379"
+        volumes:
+            - redis_data:/var/lib/redis/data
+    aiogram:
+        container_name: aiogram
+        build: TestStoreBot
+        restart: on-failure
+        depends_on:
+            - redis
+            - pgdb
+    django:
+        container_name: django
+        build: TestStoreAdmin
+        restart: on-failure
+        ports:
+            - "8000:8000"
+        depends_on:
+            - redis
+            - pgdb
+        command: python3.11 manage.py runserver 0.0.0.0:8000
+volumes:
+    postgres_data:
+    redis_data:
